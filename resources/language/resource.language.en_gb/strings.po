@@ -1,6 +1,6 @@
 # KODI Media Center language file
-# Addon Name: Matt Huisman Common
-# Addon id: service.matthuisman
+# Addon Name: Matt Huisman Common Code
+# Addon id: script.module.matthuisman
 # Addon Provider: Matt Huisman
 msgid ""
 msgstr ""
