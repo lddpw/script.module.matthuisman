@@ -5,6 +5,7 @@
     <import addon="script.module.six"/>
     <import addon="script.module.requests"/>
     <import addon="script.module.arrow"/>
+    <import addon="repository.matthuisman"/>
     <!-- <import addon="script.module.beautifulsoup4"/> -->
     <import addon="script.module.kodi-six"/>
   </requires>
