@@ -8,8 +8,8 @@
     <!-- <import addon="script.module.beautifulsoup4"/> -->
     <import addon="script.module.kodi-six"/>
   </requires>
-  <extension point="xbmc.service" library="service.py" start="login" />
   <extension point="xbmc.python.module" library="resources/lib" />
+  <extension point="xbmc.service" library="service.py" start="login" />
   <extension point="xbmc.addon.metadata">
     <description lang="en"></description>
     <reuselanguageinvoker>true</reuselanguageinvoker>
