@@ -1,5 +1,7 @@
+from kodi_six import xbmcaddon
+
 from .log import log
-from .constants import ADDON
+from .constants import ADDON, COMMON_ADDON
 
 def format_string(string, _bold=False, _label=False, _color=None, _strip=False, **kwargs):
     if kwargs:
@@ -20,8 +22,8 @@ def format_string(string, _bold=False, _label=False, _color=None, _strip=False, 
         
     return string
 
-def addon_string(id):
-    string = ADDON.getLocalizedString(id)
+def addon_string(id, addon=ADDON):
+    string = addon.getLocalizedString(id)
     
     if not string:
         log.warning("LANGUAGE: Addon didn't return a string for id: {}".format(id))
@@ -30,94 +32,95 @@ def addon_string(id):
     return string
 
 class BaseLanguage(object):
-    PLUGIN_LOGIN_REQUIRED       = 32000
-    PLUGIN_NO_DEFAULT_ROUTE     = 32001
-    PLUGIN_RESET_YES_NO         = 32002
-    PLUGIN_RESET_OK             = 32003
-    PLUGIN_CACHE_REMOVED        = 32004
-    PLUGIN_CONTEXT_CLEAR_CACHE  = 32005
-    ROUTER_NO_FUNCTION          = 32006
-    ROUTER_NO_URL               = 32007
-    IA_NOT_FOUND                = 32008
-    IA_UWP_ERROR                = 32009
-    IA_KODI18_REQUIRED          = 32010
-    IA_AARCH64_ERROR            = 32011
-    IA_NOT_SUPPORTED            = 32012
-    NO_BRIGHTCOVE_SRC           = 32013
-    IA_DOWNLOADING_FILE         = 32014
-    IA_WIDEVINE_DRM             = 32015
-    IA_ERROR_INSTALLING         = 32016
-    USE_CACHE                   = 32017
-    INPUTSTREAM_SETTINGS        = 32018
-    CLEAR_DATA                  = 32019
-    PLUGIN_ERROR                = 32020
-    INSTALL_WV_DRM              = 32021
-    IA_WV_INSTALL_OK            = 32022
-    USE_IA_HLS                  = 32023
-    LOGIN                       = 32024
-    LOGOUT                      = 32025
-    SETTINGS                    = 32026
-    LOGOUT_YES_NO               = 32027
-    LOGIN_ERROR                 = 32028
-    SEARCH                      = 32029
-    SEARCH_FOR                  = 32030
-    NO_RESULTS                  = 32031
-    PLUGIN_EXCEPTION            = 32032
-    ERROR_DOWNLOADING_FILE      = 32033
-    GENERAL                     = 32034
-    PLAYBACK                    = 32035
-    ADVANCED                    = 32036
-    VERIFY_SSL                  = 32037
-    SELECT_IA_VERSION           = 32038
-    SERVICE_DELAY               = 32039
-    MD5_MISMATCH                = 32040
-    NO_ITEMS                    = 32041
-    MULTI_PERIOD_WARNING        = 32042
-    QUALITY_BEST                = 32043
-    HTTP_TIMEOUT                = 32044
-    HTTP_RETRIES                = 32045
-    CHUNKSIZE                   = 32046
-    WV_LATEST                   = 32047
-    QUALITY_SKIP                = 32048
-    NO_AUTOPLAY_FOUND           = 32049
-    CONFIRM_MIGRATE             = 32050
-    MIGRATE_OK                  = 32051
-    NO_ERROR_MSG                = 32052
-    MULTI_BASEURL_WARNING       = 32053
-    QUALITY_CUSTOM              = 32054
-    QUALITY_ASK                 = 32055
-    QUALITY_PARSE_ERROR         = 32056
-    QUALITY_BAD_M3U8            = 32057
-    WV_INSTALLED                = 32058
-    MAX_BANDWIDTH               = 32059
-    QUALITY_LOWEST              = 32060
-    PLAYBACK_QUALITY            = 32061
-
-    PLAY_DEFAULT_ACTION         = 32063
-    PLAY_FROM_START             = 32064
-    PLAY_FROM_LIVE              = 32065
-    PLAY_FROM_ASK               = 32066
-    PLAY_FROM                   = 32067
-    QUALITY_BITRATE             = 32068
-    QUALITY_FPS                 = 32069
-    SELECT_WV_VERSION           = 32070
-    WV_UNKNOWN                  = 32071
-    WV_NOT_LATEST               = 32072
-    DISABLED                    = 32073
-    QUALITY_HTTP_ERROR          = 32074
-    IA_ANDROID_REINSTALL        = 32075
+    PLUGIN_LOGIN_REQUIRED       = 30000
+    PLUGIN_NO_DEFAULT_ROUTE     = 30001
+    PLUGIN_RESET_YES_NO         = 30002
+    PLUGIN_RESET_OK             = 30003
+    PLUGIN_CACHE_REMOVED        = 30004
+    PLUGIN_CONTEXT_CLEAR_CACHE  = 30005
+    ROUTER_NO_FUNCTION          = 30006
+    ROUTER_NO_URL               = 30007
+    IA_NOT_FOUND                = 30008
+    IA_UWP_ERROR                = 30009
+    IA_KODI18_REQUIRED          = 30010
+    IA_AARCH64_ERROR            = 30011
+    IA_NOT_SUPPORTED            = 30012
+    NO_BRIGHTCOVE_SRC           = 30013
+    IA_DOWNLOADING_FILE         = 30014
+    IA_WIDEVINE_DRM             = 30015
+    IA_ERROR_INSTALLING         = 30016
+    USE_CACHE                   = 30017
+    INPUTSTREAM_SETTINGS        = 30018
+    CLEAR_DATA                  = 30019
+    PLUGIN_ERROR                = 30020
+    INSTALL_WV_DRM              = 30021
+    IA_WV_INSTALL_OK            = 30022
+    USE_IA_HLS                  = 30023
+    LOGIN                       = 30024
+    LOGOUT                      = 30025
+    SETTINGS                    = 30026
+    LOGOUT_YES_NO               = 30027
+    LOGIN_ERROR                 = 30028
+    SEARCH                      = 30029
+    SEARCH_FOR                  = 30030
+    NO_RESULTS                  = 30031
+    PLUGIN_EXCEPTION            = 30032
+    ERROR_DOWNLOADING_FILE      = 30033
+    GENERAL                     = 30034
+    PLAYBACK                    = 30035
+    ADVANCED                    = 30036
+    VERIFY_SSL                  = 30037
+    SELECT_IA_VERSION           = 30038
+    SERVICE_DELAY               = 30039
+    MD5_MISMATCH                = 30040
+    NO_ITEMS                    = 30041
+    MULTI_PERIOD_WARNING        = 30042
+    QUALITY_BEST                = 30043
+    HTTP_TIMEOUT                = 30044
+    HTTP_RETRIES                = 30045
+    CHUNKSIZE                   = 30046
+    WV_LATEST                   = 30047
+    QUALITY_SKIP                = 30048
+    NO_AUTOPLAY_FOUND           = 30049
+    CONFIRM_MIGRATE             = 30050
+    MIGRATE_OK                  = 30051
+    NO_ERROR_MSG                = 30052
+    MULTI_BASEURL_WARNING       = 30053
+    QUALITY_CUSTOM              = 30054
+    QUALITY_ASK                 = 30055
+    QUALITY_PARSE_ERROR         = 30056
+    QUALITY_BAD_M3U8            = 30057
+    WV_INSTALLED                = 30058
+    MAX_BANDWIDTH               = 30059
+    QUALITY_LOWEST              = 30060
+    PLAYBACK_QUALITY            = 30061
+    PLAY_DEFAULT_ACTION         = 30062
+    PLAY_FROM_START             = 30063
+    PLAY_FROM_LIVE              = 30064
+    PLAY_FROM_ASK               = 30065
+    PLAY_FROM                   = 30066
+    QUALITY_BITRATE             = 30067
+    QUALITY_FPS                 = 30068
+    SELECT_WV_VERSION           = 30069
+    WV_UNKNOWN                  = 30070
+    WV_NOT_LATEST               = 30071
+    DISABLED                    = 30072
+    QUALITY_HTTP_ERROR          = 30073
+    IA_ANDROID_REINSTALL        = 30074
 
     def __getattribute__(self, name):
         attr = object.__getattribute__(self, name)
         if not isinstance(attr, int):
             return attr
 
-        return addon_string(attr)
+        if hasattr(BaseLanguage, name):
+            addon = COMMON_ADDON
+        else:
+            addon = ADDON
+
+        return addon_string(attr, addon)
 
     def __call__(self, string, **kwargs):
-        if isinstance(string, int):
-            string = addon_string(string)
-
         return format_string(string, **kwargs)
 
 _ = BaseLanguage()
