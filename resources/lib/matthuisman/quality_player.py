@@ -197,6 +197,7 @@ def parse(item, quality=None):
         return
 
     if len(qualities) < 2:
+        log.debug('Only found {} quality, skipping quality select'.format(len(qualities)))
         return
 
     if quality == QUALITY_ASK:

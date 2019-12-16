@@ -2,12 +2,9 @@ import sys
 from time import time
 from functools import wraps
 
-try:
-    import cPickle as pickle
-except:
-    import pickle
-
-from kodi_six import xbmcgui
+from kodi_six import xbmcgui  #returns unicode getProperty
+#import xbmcgui
+from six.moves import cPickle
 
 from .log import log
 from .util import hash_6
@@ -29,9 +26,11 @@ def load():
 
         try:
             data = _window.getProperty(cache_key)
-            cache.data = pickle.loads(data)
-        except:
-            pass
+            cache.data = cPickle.loads(data.encode('latin1'))
+        except Exception as e:
+            log.exception(e)
+        else:
+            log.debug('Cache data loaded. OK')
 
         _window.setProperty(cache_key, "{}")
 
@@ -133,7 +132,7 @@ def remove_expired():
         log('Mem Cache: Deleted {} Expired Rows'.format(len(delete)))
 
     if settings.getBool('persist_cache', True):
-        _window.setProperty(cache_key, pickle.dumps(cache.data))
+        _window.setProperty(cache_key, cPickle.dumps(cache.data, protocol=0).decode('latin1'))
         cache.data.clear()
 
 @router.route(ROUTE_CLEAR_CACHE)
