@@ -5,7 +5,7 @@
     <import addon="repository.matthuisman"/>
   </requires>
   <extension point="xbmc.python.module" library="resources/lib" />
-  <extension point="xbmc.service" library="service.py" start="login" />
+  <!-- <extension point="xbmc.service" library="service.py" start="login" /> -->
   <extension point="xbmc.addon.metadata">
     <description lang="en"></description>
     <reuselanguageinvoker>true</reuselanguageinvoker>
