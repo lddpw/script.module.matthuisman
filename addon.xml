@@ -2,12 +2,7 @@
 <addon id="script.module.matthuisman" name="Matt Huisman Common Code" provider-name="MattHuisman.nz" version="0.0.1">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.six"/>
-    <import addon="script.module.requests"/>
-    <import addon="script.module.arrow"/>
     <import addon="repository.matthuisman"/>
-    <!-- <import addon="script.module.beautifulsoup4"/> -->
-    <import addon="script.module.kodi-six"/>
   </requires>
   <extension point="xbmc.python.module" library="resources/lib" />
   <extension point="xbmc.service" library="service.py" start="login" />
