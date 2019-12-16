@@ -1,5 +1,5 @@
 from .log import log
-from .constants import ADDON
+from .constants import ADDON, COMMON_ADDON
 
 def format_string(string, _bold=False, _label=False, _color=None, _strip=False, **kwargs):
     if kwargs:
@@ -21,7 +21,10 @@ def format_string(string, _bold=False, _label=False, _color=None, _strip=False, 
     return string
 
 def addon_string(id):
-    string = ADDON.getLocalizedString(id)
+    if id >= 32000:
+        string = COMMON_ADDON.getLocalizedString(id)
+    else:
+        string = ADDON.getLocalizedString(id)
     
     if not string:
         log.warning("LANGUAGE: Addon didn't return a string for id: {}".format(id))

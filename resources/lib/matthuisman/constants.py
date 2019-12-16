@@ -15,6 +15,8 @@ ADDON_FANART   = ADDON.getAddonInfo('fanart')
 ADDON_DEV      = bool(int(os.environ.get('ADDON_DEV', '0')))
 #################
 
+COMMON_ADDON   = xbmcaddon.Addon('script.module.matthuisman')
+
 #### DATABASE #####
 DB_PATH         = os.path.join(ADDON_PROFILE, 'data.db')
 DB_MAX_INSERTS  = 100
