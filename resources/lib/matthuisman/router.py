@@ -1,4 +1,4 @@
-from six.moves.urllib_parse import parse_qsl, urlparse, urlunparse, urlencode, unquote
+from six.moves.urllib_parse import parse_qsl, urlparse, urlencode
 
 from . import signals
 from .constants import ROUTE_TAG, ADDON_ID, ROUTE_LIVE_TAG, ROUTE_LIVE_SUFFIX, ROUTE_URL_TAG
@@ -42,7 +42,7 @@ def parse_url(url):
     if url.startswith('?'):
         params = dict(parse_qsl(url.lstrip('?'), keep_blank_values=True))
         for key in params:
-            params[key] = unquote(params[key])
+            params[key] = params[key]
 
         _url     = params.pop(ROUTE_TAG, '')
     else:
