@@ -180,7 +180,8 @@ def parse(item, quality=None):
         resp = Session().get(playlist_url, headers=item.headers, cookies=item.cookies)
     except Exception as e:
         log.exception(e)
-        result = False
+        gui.ok(_(_.QUALITY_PARSE_ERROR, error=e))
+        return
     else:
         result = resp.ok
 
