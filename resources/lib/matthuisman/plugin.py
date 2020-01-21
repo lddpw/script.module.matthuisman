@@ -54,9 +54,7 @@ def route(url=None):
             elif isinstance(item, Item):
                 item.play(quality=kwargs.get(QUALITY_TAG))
             elif isinstance(item, Redirect):
-                if _handle() > 0:
-                    xbmcplugin.endOfDirectory(_handle(), succeeded=True, updateListing=True, cacheToDisc=True)
-
+                self.resolve()
                 gui.redirect(item.location)
             else:
                 resolve()
@@ -86,9 +84,12 @@ def merge():
 
 
 def resolve():
-    if _handle() > 0:
-        xbmcplugin.endOfDirectory(_handle(), succeeded=False, updateListing=False, cacheToDisc=False)
-    
+    handle = _handle()
+    if handle > 0:
+        li = Item(path='http://').get_li()
+        xbmcplugin.setResolvedUrl(handle, False, li)
+        xbmcplugin.setResolvedUrl(handle, True, li)
+
 @signals.on(signals.ON_ERROR)
 def _error(e):
     try:
