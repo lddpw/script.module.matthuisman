@@ -56,8 +56,8 @@ def route(url=None):
             elif isinstance(item, Redirect):
                 self.resolve()
                 gui.redirect(item.location)
-            else:
-                resolve()
+            # else:
+            #     resolve()
 
         router.add(url, decorated_function)
         return decorated_function
@@ -83,12 +83,16 @@ def merge():
     return lambda f: decorator(f)
 
 
-def resolve():
+def resolve(error=False):
     handle = _handle()
     if handle > 0:
-        li = Item(path='http://').get_li()
-        xbmcplugin.setResolvedUrl(handle, False, li)
-        xbmcplugin.setResolvedUrl(handle, True, li)
+        if error:
+            li = Item(path='http://').get_li()
+            xbmcplugin.setResolvedUrl(handle, False, li)
+            xbmcplugin.endOfDirectory(handle, succeeded=False, updateListing=True, cacheToDisc=False)
+            xbmcplugin.setResolvedUrl(handle, True, li)
+        else:
+            xbmcplugin.endOfDirectory(handle, succeeded=False, updateListing=True, cacheToDisc=False)
 
 @signals.on(signals.ON_ERROR)
 def _error(e):
@@ -104,14 +108,14 @@ def _error(e):
     _close()
 
     gui.ok(error, heading=e.heading)
-    resolve()
+    resolve(error=True)
 
 @signals.on(signals.ON_EXCEPTION)
 def _exception(e):
     log.exception(e)
     _close()
     gui.exception()
-    resolve()
+    resolve(error=True)
 
 @route('')
 def _home(**kwargs):
@@ -139,6 +143,7 @@ def _close():
 def _settings(**kwargs):
     _close()
     settings.open()
+    resolve()
     gui.refresh()
 
 @route(ROUTE_RESET)

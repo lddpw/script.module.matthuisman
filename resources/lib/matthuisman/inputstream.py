@@ -7,9 +7,11 @@ import struct
 
 from kodi_six import xbmc, xbmcaddon
 
-from . import gui, settings, userdata
+from . import gui, settings
+from .userdata import Userdata
+from .session import Session
 from .log import log
-from .constants import IA_ADDON_ID, IA_VERSION_KEY, IA_HLS_MIN_VER, IA_MPD_MIN_VER, IA_MODULES_URL, IA_CHECK_EVERY
+from .constants import IA_ADDON_ID, IA_VERSION_KEY, IA_HLS_MIN_VER, IA_MPD_MIN_VER, IA_MODULES_URL, IA_CHECK_EVERY, COMMON_ADDON_ID
 from .language import _
 from .util import get_kodi_version, md5sum, remove_file, get_system_arch, hash_6
 from .exceptions import InputStreamError
@@ -146,6 +148,7 @@ def install_widevine(reinstall=False):
     ia_addon     = get_ia_addon(required=True)
     system, arch = get_system_arch()
     kodi_version = get_kodi_version()
+    userdata     = Userdata(COMMON_ADDON_ID)
     
     DST_FILES    = {
         'Linux':   'libwidevinecdm.so',
@@ -185,8 +188,6 @@ def install_widevine(reinstall=False):
 
     ## DO INSTALL ##
     userdata.set('_wv_last_check', int(time.time()))
-
-    from .session import Session
 
     r = Session().get(IA_MODULES_URL)
     if r.status_code != 200:
@@ -256,8 +257,6 @@ def _download(url, dst_path, md5=None):
         else:
             remove_file(dst_path)
             
-    from .session import Session
-
     with gui.progress(_(_.IA_DOWNLOADING_FILE, url=filename), heading=_.IA_WIDEVINE_DRM) as progress:
         resp = Session().get(url, stream=True)
         if resp.status_code != 200:
