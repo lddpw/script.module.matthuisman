@@ -7,6 +7,7 @@ from kodi_six import xbmcgui, xbmc, xbmcgui
 
 from .constants import ADDON_ID, ADDON_NAME, ADDON_ICON, ADDON_FANART, GUI_DEFAULT_AUTOCLOSE
 from .exceptions import GUIError
+from .router import add_url_args
 from .language import _
 
 def _make_heading(heading=None):
@@ -174,6 +175,8 @@ class Item(object):
 
         if self.playable:
             li.setProperty('IsPlayable', 'true')
+            if self.path:
+                self.path = add_url_args(self.path, _play=1)
 
         if self.context:
             li.addContextMenuItems(self.context)

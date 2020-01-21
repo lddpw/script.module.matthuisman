@@ -54,10 +54,12 @@ def route(url=None):
             elif isinstance(item, Item):
                 item.play(quality=kwargs.get(QUALITY_TAG))
             elif isinstance(item, Redirect):
-                self.resolve()
+                if _handle() > 0:
+                    xbmcplugin.endOfDirectory(_handle(), succeeded=True, updateListing=True, cacheToDisc=True)
+                    
                 gui.redirect(item.location)
-            # else:
-            #     resolve()
+            else:
+                resolve()
 
         router.add(url, decorated_function)
         return decorated_function
@@ -86,13 +88,15 @@ def merge():
 def resolve(error=False):
     handle = _handle()
     if handle > 0:
-        if error:
-            li = Item(path='http://').get_li()
-            xbmcplugin.setResolvedUrl(handle, False, li)
-            xbmcplugin.endOfDirectory(handle, succeeded=False, updateListing=True, cacheToDisc=False)
-            xbmcplugin.setResolvedUrl(handle, True, li)
+        if error and '_play=1' in sys.argv[2]:
+            ## Stop autoplay on error
+
+            xbmcplugin.setResolvedUrl(handle, False, Item(path='http://').get_li())
+            xbmcplugin.endOfDirectory(handle, succeeded=True, updateListing=False, cacheToDisc=False)
+            # xbmc.PlayList(xbmc.PLAYLIST_MUSIC).clear()
+            # xbmc.PlayList(xbmc.PLAYLIST_VIDEO).clear()
         else:
-            xbmcplugin.endOfDirectory(handle, succeeded=False, updateListing=True, cacheToDisc=False)
+            xbmcplugin.endOfDirectory(handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
 @signals.on(signals.ON_ERROR)
 def _error(e):
@@ -114,6 +118,7 @@ def _error(e):
 def _exception(e):
     log.exception(e)
     _close()
+
     gui.exception()
     resolve(error=True)
 
@@ -143,7 +148,6 @@ def _close():
 def _settings(**kwargs):
     _close()
     settings.open()
-    resolve()
     gui.refresh()
 
 @route(ROUTE_RESET)
