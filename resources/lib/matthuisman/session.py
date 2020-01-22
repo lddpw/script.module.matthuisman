@@ -17,7 +17,7 @@ _orig_create_connection = connection.create_connection
 common_data = userdata.Userdata(COMMON_ADDON_ID)
 
 class Session(requests.Session):
-    def __init__(self, headers=None, cookies_key=None, base_url='{}', timeout=None, attempts=None, verify=None, hosts=None):
+    def __init__(self, headers=None, cookies_key=None, base_url='{}', timeout=None, attempts=None, verify=None, hosts=None, use_hosts=True):
         super(Session, self).__init__()
 
         self._headers     = headers or {}
@@ -27,11 +27,10 @@ class Session(requests.Session):
         self._attempts    = attempts or settings.getInt('http_retries', 2)
         self._verify      = verify if verify is not None else settings.getBool('verify_ssl', True)
         self._hosts       = hosts or {}
+        self._use_hosts   = use_hosts
 
         self.headers.update(DEFAULT_HEADERS)
         self.headers.update(self._headers)
-
-        connection.create_connection = self._patched_create_connection
 
         if self._cookies_key:
             self.cookies.update(userdata.get(self._cookies_key, {}))
@@ -63,14 +62,22 @@ class Session(requests.Session):
         kwargs['verify']  = verify or self._verify
         attempts          = attempts or self._attempts
 
-        for i in range(1, attempts+1):
-            log('Attempt {}/{}: {} {} {}'.format(i, attempts, method, url, kwargs if method.lower() != 'post' else ""))
+        try:
+            if self._use_hosts:
+                connection.create_connection = self._patched_create_connection
 
-            try:
-                return super(Session, self).request(method, url, **kwargs)
-            except:
-                if i == attempts:
-                    raise
+            for i in range(1, attempts+1):
+                log('Attempt {}/{}: {} {} {}'.format(i, attempts, method, url, kwargs if method.lower() != 'post' else ""))
+
+                try:
+                    return super(Session, self).request(method, url, **kwargs)
+                except:
+                    if i == attempts:
+                        raise
+        except:
+            raise
+        finally:
+            connection.create_connection = _orig_create_connection
 
     def save_cookies(self):
         if not self._cookies_key:

@@ -177,7 +177,7 @@ def parse(item, quality=None):
     playlist_url = item.path.split('|')[0]
 
     try:
-        resp = Session().get(playlist_url, headers=item.headers, cookies=item.cookies)
+        resp = Session(use_hosts=False).get(playlist_url, headers=item.headers, cookies=item.cookies)
     except Exception as e:
         log.exception(e)
         gui.ok(_(_.QUALITY_PARSE_ERROR, error=e))

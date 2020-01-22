@@ -18,6 +18,7 @@ def check_dns():
     key        = common_data.get('dns4me_key')
     enabled    = settings.getBool('enable_dns4me', False)
     service_id = settings.get('_dns4me_service_id')
+    use_hosts  = settings.getBool('dns4me_use_hosts', True)
 
     if not enabled or not service_id:
         return
@@ -26,6 +27,9 @@ def check_dns():
         key = login()
         if not key:
             return
+
+    if use_hosts and not common_data.get('_dns_hosts'):
+        _window.setProperty('_dns_enabled', '')
 
     #move this as a skin settings
     if _window.getProperty('_dns_enabled') == ADDON_ID:
