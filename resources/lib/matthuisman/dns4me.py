@@ -30,6 +30,8 @@ def check_dns():
 
     if use_hosts and not common_data.get('_dns_hosts'):
         _window.setProperty('_dns_enabled', '')
+    elif not use_hosts:
+        common_data.delete('_dns_hosts')
 
     #move this as a skin settings
     if _window.getProperty('_dns_enabled') == ADDON_ID:
