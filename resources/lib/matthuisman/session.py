@@ -36,8 +36,8 @@ class Session(requests.Session):
             self.cookies.update(userdata.get(self._cookies_key, {}))
 
     def _patched_create_connection(self, address, *args, **kwargs):
-        if settings.getBool('enable_dns4me', False) and xbmcgui.Window(10000).getProperty('_dns_enabled') == ADDON_ID:
-            hosts = common_data.get('_dns_hosts', {})
+        if settings.getBool('dns4me_enabled', False) and xbmcgui.Window(10000).getProperty('dns4me_addon') == ADDON_ID:
+            hosts = common_data.get('dns4me_hosts', {})
         else:
             hosts = {}
     
