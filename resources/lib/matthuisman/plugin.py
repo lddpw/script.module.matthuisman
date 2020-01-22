@@ -6,7 +6,7 @@ from functools import wraps
 
 from kodi_six import xbmc, xbmcplugin
 
-from . import router, gui, settings, userdata, inputstream, signals, quality_player
+from . import router, gui, settings, userdata, inputstream, signals, quality_player, dns4me
 from .constants import ROUTE_SETTINGS, ROUTE_RESET, ROUTE_SERVICE, ROUTE_CLEAR_CACHE, ROUTE_IA_SETTINGS, ROUTE_IA_INSTALL, ADDON_ICON, ADDON_FANART, ADDON_ID, ADDON_NAME, ROUTE_AUTOPLAY_TAG, ADDON_PROFILE, QUALITY_TAG
 from .log import log
 from .language import _
@@ -89,12 +89,7 @@ def resolve(error=False):
     handle = _handle()
     if handle > 0:
         if error and '_play=1' in sys.argv[2]:
-            ## Stop autoplay on error
-
-            xbmcplugin.setResolvedUrl(handle, False, Item(path='http://').get_li())
-            xbmcplugin.endOfDirectory(handle, succeeded=True, updateListing=False, cacheToDisc=False)
-            # xbmc.PlayList(xbmc.PLAYLIST_MUSIC).clear()
-            # xbmc.PlayList(xbmc.PLAYLIST_VIDEO).clear()
+            _failed_playback()
         else:
             xbmcplugin.endOfDirectory(handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
@@ -205,6 +200,13 @@ def _autoplay(folder, pattern):
 
     raise PluginError(_(_.NO_AUTOPLAY_FOUND, pattern=pattern))
 
+def _failed_playback():
+    handle = _handle()
+    xbmcplugin.setResolvedUrl(handle, False, Item(path='http://').get_li())
+    xbmcplugin.endOfDirectory(handle, succeeded=True, updateListing=False, cacheToDisc=False)
+    # xbmc.PlayList(xbmc.PLAYLIST_MUSIC).clear()
+    # xbmc.PlayList(xbmc.PLAYLIST_VIDEO).clear()
+
 #Plugin.Item()
 class Item(gui.Item):
     def __init__(self, cache_key=None, playback_error=None, *args, **kwargs):
@@ -237,7 +239,10 @@ class Item(gui.Item):
         handle = _handle()
 
         if handle > 0:
-            xbmcplugin.setResolvedUrl(handle, result, li)
+            if not result:
+                _failed_playback()
+            else:
+                xbmcplugin.setResolvedUrl(handle, True, li)
         elif result:
             xbmc.Player().play(self.path, li)
 

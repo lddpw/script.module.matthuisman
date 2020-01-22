@@ -1,16 +1,23 @@
+from urllib3.util import connection
+
 import requests
 
-from kodi_six import xbmc
+from kodi_six import xbmc, xbmcgui
 
-from . import userdata, settings
+from . import userdata, settings, mem_cache
 from .log import log
+from .constants import ADDON_ID, COMMON_ADDON_ID
 
 DEFAULT_HEADERS = {
     'User-Agent': xbmc.getUserAgent(),
 }
 
+_orig_create_connection = connection.create_connection
+
+common_data = userdata.Userdata(COMMON_ADDON_ID)
+
 class Session(requests.Session):
-    def __init__(self, headers=None, cookies_key=None, base_url='{}', timeout=None, attempts=None, verify=None):
+    def __init__(self, headers=None, cookies_key=None, base_url='{}', timeout=None, attempts=None, verify=None, hosts=None):
         super(Session, self).__init__()
 
         self._headers     = headers or {}
@@ -19,12 +26,31 @@ class Session(requests.Session):
         self._timeout     = timeout or settings.getInt('http_timeout', 30)
         self._attempts    = attempts or settings.getInt('http_retries', 2)
         self._verify      = verify if verify is not None else settings.getBool('verify_ssl', True)
+        self._hosts       = hosts or {}
 
         self.headers.update(DEFAULT_HEADERS)
         self.headers.update(self._headers)
 
+        connection.create_connection = self._patched_create_connection
+
         if self._cookies_key:
             self.cookies.update(userdata.get(self._cookies_key, {}))
+
+    def _patched_create_connection(self, address, *args, **kwargs):
+        if settings.getBool('enable_dns4me', False) and xbmcgui.Window(10000).getProperty('_dns_enabled') == ADDON_ID:
+            hosts = common_data.get('_dns_hosts', {})
+        else:
+            hosts = {}
+    
+        hosts.update(self._hosts)
+
+        host, port = address
+        _host = hosts.get(host.lower())
+        if _host:
+            log.debug('Rewrite DNS: {} > {}'.format(host, _host))
+            host = _host
+
+        return _orig_create_connection((host, port), *args, **kwargs)
 
     def request(self, method, url, timeout=None, attempts=None, verify=None, **kwargs):
         if not url.startswith('http'):
