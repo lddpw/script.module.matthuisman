@@ -12,6 +12,11 @@ DEFAULT_HEADERS = {
     'User-Agent': xbmc.getUserAgent(),
 }
 
+DEFAULT_PROXY = {
+    'http': 'http://10.30.30.254:3128',
+    'https': 'http://10.30.30.254:3128',
+}
+
 _orig_create_connection = connection.create_connection
 
 common_data = userdata.Userdata(COMMON_ADDON_ID)
@@ -31,6 +36,9 @@ class Session(requests.Session):
 
         self.headers.update(DEFAULT_HEADERS)
         self.headers.update(self._headers)
+        
+        self.trust_env=False
+        self.proxies.update(DEFAULT_PROXY)
 
         if self._cookies_key:
             self.cookies.update(userdata.get(self._cookies_key, {}))
